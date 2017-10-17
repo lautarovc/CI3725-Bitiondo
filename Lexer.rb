@@ -27,6 +27,36 @@ class Lexer
 	end
 
 	def leer()
+ 
+		superRegex = /\A(\s)*                  							| 	# Espacios
+					  \A#                      							|	# Comentario
+					  \Atrue\b | \Afalse\b   							| 	# Constantes booleanas
+					  \A[a-zA-Z][a-zA-Z0-9_]*  							| 	# Palabra
+					  \A0b[01]+                							|	# Bits
+					  \A(\d)+                  						    |	# Entero
+					  \A"(\\.|[^\\"\n])*"      						    |   # Cadena de Caracteres
+					  \A\[	|  \A\]	   									|   # Corchetes
+					  \A\!                     							|   # Negacion 
+					  \A\~                     							|   # Negacion bits 
+					  \A\$                     							|   # Operador unario de bits dolar 
+					  \A\@                     							|   # Operador unario de bits arroba
+					  \A\-                     							|   # Negacion o resta 
+					  \A\*                     							|   # Multiplicacion 
+					  \A\/                     							|   # Division 
+					  \A\%                     							|   # Modulo 
+					  \A\+                     							|   # Suma
+					  \A\<\<  |  \A\>\>    							    |   # Desplazamientos 
+					  \A\< | \A\<\= | \A\> | \A\>\= | \A\=\= | \A\!\=   |   # Comparadores
+					  \A\&                                              |   # Conjuncion bits 
+					  \A\^                                              |   # Disyuncion exclusiva bits 
+					  \A\|                                              |   # Disyuncion bits 
+					  \A\&\&                                            |   # Conjuncion 
+					  \A\|\|                                            |   # Disyuncion
+					  \A\;                                              |   # Punto y coma 
+					  \A\,                                              |   # Coma 
+					  \A\( | \A\)                                       |   # Parentesis                      
+					  \
+					  /x
 
 		error = false
 
