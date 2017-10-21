@@ -1,0 +1,20 @@
+begin 
+	int x; 
+	outputln x;               # Imprime 0
+
+	begin 
+		bits x[2]; 
+		outputln x;           # Imprime 0b00 end
+
+	x = 1; 
+	outputln x;               # Imprime 1
+	
+	begin 
+		bool x; 
+		outputln x;           # Imprime false 
+	end
+
+	bits xs[2]; 
+	fobits xs as x from 0 going higher 
+		outputln x;           # Imprime 0 y 0
+end 

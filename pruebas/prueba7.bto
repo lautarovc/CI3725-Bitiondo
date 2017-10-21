@@ -1,0 +1,6 @@
+begin 
+	int age; 
+	output "how old are you?"; 
+	input age; 
+	output "you said ", age, ", right?"; 
+end

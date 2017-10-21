@@ -1,0 +1,4 @@
+begin 
+	int a = 2; 
+	outputln @a; 
+end 

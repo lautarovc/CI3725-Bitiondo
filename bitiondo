@@ -1,0 +1,54 @@
+#! /usr/bin/ruby
+
+=begin
+
+bitiondo
+
+Descripcion: Primera entrega del lenguaje de programacion Bitiondo
+
+Autores:
+	Lautaro Villalon. 12-10427
+	Yarima Luciani. 13-10770
+
+=end
+
+
+require_relative 'Lexer.rb'
+
+def main
+	ARGV[0] =~ /\w+\.bto/
+
+	# VERIFICACION DE EXTENSION DE ARCHIVO
+	if $&.nil?
+		puts "Extensión desconocida."
+		return
+	end
+
+	# VERIFICACION DE EXISTENCIA DE ARCHIVO
+	if (!File.exist?(ARGV[0]))
+		puts "Archivo no encontrado."
+		return
+	end
+
+	# LECTURA POR ARREGLO DE LINEAS DE ARCHIVO
+	file = IO.readlines(ARGV[0])
+
+	# CORRIDA DEL LEXER
+	lexer = Lexer.new(file)
+
+	lexer.leer()
+
+	# SI HAY ERRORES, IMPRIME LOS ERRORES, CASO CONTRARIO, LOS TOKENS
+	if (lexer.errorList.length > 0)
+		for x in lexer.errorList
+			x.toString()
+		end
+
+	else
+		for x in lexer.tokens
+			x.toString()
+		end
+	end
+end
+
+main

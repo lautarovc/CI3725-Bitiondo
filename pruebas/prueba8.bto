@@ -1,0 +1,11 @@
+begin 
+	bits bs[4]; 
+	bool b;
+	
+	outputln bs, " es como ", b;
+	
+	bs = 0b1111; 
+	b = true;
+	
+	outputln bs, " es como ", b;
+end

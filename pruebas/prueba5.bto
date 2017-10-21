@@ -1,0 +1,16 @@
+begin 
+	bits foo[32]; 
+	foo[1] = 1;
+	
+	outputln foo; # Imprime  0b000000000000000000
+	outputln $foo; # Imprime 2
+
+end 
+
+begin 
+	bits foo[30]; 
+	foo[2] = 1;
+	
+	outputln foo; # Imprime 0b00000000000000000000000000
+	outputln $foo; # *** ERROR
+end

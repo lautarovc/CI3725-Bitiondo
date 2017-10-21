@@ -1,0 +1,23 @@
+begin 
+
+&& ||
+>= <=
+
+intA x -; 
+intint y; 
+bits z[5]; 
+bool true; 
+bool false; 
+
+input x; 
+
+outputln "Hola, soy la variable x, valgo: ", x;
+
+y = x + 2; 
+
+# Soy un comentario y no un token.
+
+ifif
+forfor
+fora
+end

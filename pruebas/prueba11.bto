@@ -1,0 +1,23 @@
+begin 
+	int x;
+	
+	repeat # primer caso, atípico pero cómodo 
+		input x; 
+	while (x > 0) do 
+		output x;
+
+	input x; 
+	while (x > 0) do # segundo caso, un `while do
+		begin 
+			output x; 
+			input x; 
+		end
+
+	input x; 
+	repeat # tercer caso, parecido a un 
+		begin 
+			output x; 
+			input x; 
+		end 
+	while (x > 0);
+end 

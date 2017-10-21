@@ -1,0 +1,30 @@
+begin 
+
+	int a = 5;
+	bits b[4] = 0b0101;
+	bool c = true;
+	bool d = false;
+
+	int e;
+	bits f[6];
+	bool g; 
+
+	if a=0 a = a + 1 else a = a - 1
+
+	for (b = 2; b >= 0; -1)
+		outputln b;
+
+	forbits b as f from 0 going higher
+		output b, " ";
+
+	forbits b as f from 0 going lower
+		output b, " ";
+
+	outputln "";
+
+	repeat 
+		input x;
+	while (x > 0) do
+		output x;
+	
+end 

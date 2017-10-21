@@ -1,0 +1,9 @@
+begin 
+	for (b = 0; b < 3; 1) 
+		outputln b; # Imprime 0, 1 y 2 
+end
+
+begin 
+	for (b = 2; b >= 0; -1) 
+		outputln b; # Imprime 2, 1 y 0 
+end
