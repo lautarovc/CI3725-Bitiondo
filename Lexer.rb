@@ -23,7 +23,6 @@ class Token
 	# Parametros de entrada: str, line, column
 	def initialize(str, line, column)
 
-		@contador = 0
 		@str = str
 		@line = line
 		@column = column
@@ -85,14 +84,14 @@ class Token
 
 				if (keyStr == "identifier" || keyStr == "bit array" || keyStr == "integer" || keyStr == "string" || keyStr == "boolean")
 					@hasValue = true
-					return keyStr
+					return keyStr.gsub(' ','').upcase
 
 				elsif (keyStr =="reserved")
-					return @str
+					return @str.gsub(' ','').upcase
 
 				end
 
-				return keyStr
+				return keyStr.gsub(' ','').upcase
 			end
 		end
 
@@ -134,6 +133,7 @@ class Lexer
 	# Parametros de entrada: file
 	def initialize(file) 
 
+		@contador = 0
 		@file = file
 		@tokens = []
 		@errorList = []
@@ -213,11 +213,28 @@ class Lexer
 		end
 
 		# BORRAMOS ESPACIOS
-		tokens.delete_if {|tok| tok.type == "Spaces"}
+		tokens.delete_if {|tok| tok.type == "SPACES"}
+
+		#final = Token.new('$', -1, -1)
+		#final.type = '$'
+		#@tokens.push(final)
 
 	end
 
-	def next_token
+	def tokenSiguiente
+		token = @tokens[@contador]
+		@contador = @contador + 1
+
+		return token
+	end
+
+	def haySiguiente
+		hay = @contador < @tokens.length
+
+		return hay
+	end
+
+
 
 end
 

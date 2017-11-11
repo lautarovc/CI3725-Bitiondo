@@ -9,8 +9,6 @@ begin
 	bits f[6];
 	bool g; 
 
-	if a=0 a = a + 1 else a = a - 1
-
 	for (b = 2; b >= 0; -1)
 		outputln b;
 

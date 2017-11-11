@@ -1,6 +1,6 @@
 =begin
 
-Lexer.rb
+astParser.rb
 
 Descripcion: AST del parser del lenguaje de programacion Bitiondo 
 
@@ -11,63 +11,63 @@ Autores:
 =end
 
 
-class nodoGeneral;
+class NodoGeneral;
 	def printNivel(num)
 		for i in 1..num
-			print "\t"
+			print "    "
 		end
 	end
 end
 
 
-#class nodoInstruccion < nodoGeneral; end
-#class nodoExpresion < nodoGeneral; end
-#class nodoExpresionBinaria < nodoGeneral; end
-#class nodoExpresionUnaria < nodoGeneral; end
-
-
-class nodoInicial < nodoGeneral
+class NodoInicial < NodoGeneral
 
 	attr_accessor :bloquePrincipal
 
-	def initialize(bloquePrincipal = nil)
-		@nivel = 0
+	def initialize(bloquePrincipal)
 		@bloquePrincipal = bloquePrincipal
 	end
 
-	def printNodo()
+	def printNodo(nivel)
+		printNivel(nivel)
 		puts "BEGIN"
 		puts
 
 		if @bloquePrincipal != nil then
-			@bloquePrincipal.printNodo(@nivel+1)
+			@bloquePrincipal.printNodo(nivel+1)
 		end
 		puts
+		printNivel(nivel)
 		puts "END"
 	end
 end
 
 
-class nodoBloquePrincipal < nodoGeneral
+class NodoBloquePrincipal < NodoGeneral
 
 	attr_accessor :declaraciones, :instrucciones
 
-	def initialize(declaraciones = nil, instrucciones = nil)
+	def initialize(declaraciones, instrucciones)
 		@declaraciones = declaraciones
 		@instrucciones = instrucciones
 	end
 
 	def printNodo(nivel)
-		@declaraciones.printNodo(nivel)
-		@instrucciones.printNodo(nivel)
+		if @declaraciones != nil then
+			@declaraciones.printNodo(nivel)
+		end
+		if @instrucciones != nil then
+			@instrucciones.printNodo(nivel)
+		end
 	end
+end
 
 
-class nodoBloques < nodoGeneral
+class NodoBloques < NodoGeneral
 
 	attr_accessor :bloquePrincipal
 
-	def initialize(bloquePrincipal = nil)
+	def initialize(bloquePrincipal)
 		@bloquePrincipal = bloquePrincipal
 	end
 
@@ -84,11 +84,12 @@ class nodoBloques < nodoGeneral
 	end
 end
 
-class nodoDeclaraciones < nodoGeneral
+
+class NodoDeclaraciones < NodoGeneral
 
 	attr_accessor :declaracion, :declaraciones
 
-	def initialize(declaracion = nil, declaraciones = nil)
+	def initialize(declaracion, declaraciones)
 		@declaracion = declaracion
 		@declaraciones = declaraciones
 	end
@@ -106,11 +107,12 @@ class nodoDeclaraciones < nodoGeneral
 	end
 end
 
-class nodoDeclaracion < nodoGeneral
+
+class NodoDeclaracion < NodoGeneral
 
 	attr_accessor :tipo, :id, :tamanio, :asignacion
 
-	def initialize(tipo, id, tamanio = nil, asignacion = nil)
+	def initialize(tipo, id, tamanio, asignacion)
 		@tipo = tipo
 		@id = id
 		@tamanio = tamanio
@@ -134,16 +136,17 @@ class nodoDeclaracion < nodoGeneral
 			@tamanio.printNodo(nivel+1)
 		end
 
-		if @asignacion != null then
+		if @asignacion != nil then
 			printNivel(nivel)
 			puts "value:"
 			@asignacion.printNodo(nivel+1)
+		end
 	end
 
 end
 
 
-class nodoInit < nodoGeneral
+class NodoInit < NodoGeneral
 
 	attr_accessor :valor
 
@@ -157,11 +160,11 @@ class nodoInit < nodoGeneral
 end
 
 
-class nodoInstrucciones < nodoGeneral
+class NodoInstrucciones < NodoGeneral
 
 	attr_accessor :instruccion, :instrucciones
 
-	def initialize(instruccion = nil, instrucciones = nil)
+	def initialize(instruccion, instrucciones)
 		@instruccion = instruccion
 		@instrucciones = instrucciones
 	end
@@ -179,11 +182,12 @@ class nodoInstrucciones < nodoGeneral
 	end
 end
 
-class nodoInstruccion < nodoGeneral
+
+class NodoInstruccion < NodoGeneral
 
 	attr_accessor :instruccion
 
-	def initialize(instruccion = nil)
+	def initialize(instruccion)
 		@instruccion = instruccion
 	end
 
@@ -193,7 +197,8 @@ class nodoInstruccion < nodoGeneral
 
 end
 
-class nodoExpresionBin < nodoGeneral
+
+class NodoExpresionBin < NodoGeneral
 
 	attr_accessor :expresion1, :opBinario, :expresion2
 
@@ -219,13 +224,15 @@ class nodoExpresionBin < nodoGeneral
 	end
 end
 
-class nodoExpresionUn < nodoGeneral
 
-	attr_accessor :opUnario, :expresion
+class NodoExpresionUn < NodoGeneral
 
-	def initialize(opUnario, expresion)
+	attr_accessor :opUnario, :expresion, :entero
+
+	def initialize(opUnario, expresion, entero)
 		@opUnario = opUnario
 		@expresion = expresion
+		@entero = entero
 	end
 
 	def printNodo(nivel)
@@ -237,11 +244,17 @@ class nodoExpresionUn < nodoGeneral
 		puts "operand:"
 		@expresion.printNodo(nivel+2)
 
+		if entero != nil then
+			printNivel(nivel+1)
+			puts "index:"
+			@entero.printNodo(nivel+2)
+		end
+
 	end
 end
 
 
-class nodoOperador < nodoGeneral
+class NodoOperador < NodoGeneral
 
 	attr_accessor :operador
 
@@ -251,12 +264,18 @@ class nodoOperador < nodoGeneral
 
 	def printNodo(nivel)
 		printNivel(nivel)
-		puts "operator: #{@operador.type}"
+		puts "operator:"
+		printNivel(nivel+1)
+		if operador == 'ACCESS' then
+			puts "#{@operador}"
+		else
+			puts "#{@operador.type}"
+		end
 	end
 end
 
 
-class nodoAsignacion < nodoGeneral
+class NodoAsignacion < NodoGeneral
 
 	attr_accessor :id, :expresion
 
@@ -279,7 +298,7 @@ class nodoAsignacion < nodoGeneral
 end
 
 
-class nodoEntrada < nodoGeneral
+class NodoEntrada < NodoGeneral
 
 	attr_accessor :id
 
@@ -296,32 +315,34 @@ class nodoEntrada < nodoGeneral
 end
 
 
-class nodoSalida < nodoGeneral
+class NodoSalida < NodoGeneral
 
 	attr_accessor :token, :expMult
 
-	def initialize(id)
+	def initialize(token, expMult)
 		@token = token
 		@expMult = expMult
 	end
 
 	def printNodo(nivel)
 		printNivel(nivel)
-		puts "#{token.str}"
+		puts "#{token.type}"
 
 		printNivel(nivel+1)
 		puts "elements:"
 
-		@expMult.printNodo(nivel+2)
+		if @expMult != nil then
+			@expMult.printNodo(nivel+2)
+		end
 	end
 end
 
 
-class nodoExpMultiple < nodoGeneral
+class NodoExpMultiple < NodoGeneral
 
 	attr_accessor :expresion, :expMultiple
 
-	def initialize(expresion = nil, expMultiple = nil)
+	def initialize(expresion, expMultiple)
 		@expresion = expresion
 		@expMultiple = expMultiple
 	end
@@ -340,11 +361,11 @@ class nodoExpMultiple < nodoGeneral
 end
 
 
-class nodoCondicional < nodoGeneral
+class NodoCondicional < NodoGeneral
 
 	attr_accessor :expresion, :instDec, :clausuraElse
 
-	def initialize(expresion, instDec = nil, clausuraElse = nil)
+	def initialize(expresion, instDec, clausuraElse)
 		@expresion = expresion
 		@instDec = instDec
 		@clausuraElse = clausuraElse
@@ -373,11 +394,11 @@ class nodoCondicional < nodoGeneral
 end
 
 
-class nodoClausuraElse < nodoGeneral
+class NodoClausuraElse < NodoGeneral
 
 	attr_accessor :instDec
 
-	def initialize(instDec = nil)
+	def initialize(instDec)
 		@instDec = instDec
 	end
 
@@ -395,11 +416,11 @@ class nodoClausuraElse < nodoGeneral
 end
 
 
-class nodoFor < nodoGeneral
+class NodoFor < NodoGeneral
 
 	attr_accessor :asignacion, :expresion1, :expresion2, :instDec
 
-	def initialize(asignacion, expresion1, expresion2, instDec = nil)
+	def initialize(asignacion, expresion1, expresion2, instDec)
 		@asignacion = asignacion
 		@expresion1 = expresion1
 		@expresion2 = expresion2
@@ -426,11 +447,11 @@ class nodoFor < nodoGeneral
 end
 
 
-class nodoForBits < nodoGeneral
+class NodoForBits < NodoGeneral
 
 	attr_accessor :expresion1, :id, :expresion2, :token, :instDec
 
-	def initialize(expresion1, id, expresion2, token, instDec = nil)
+	def initialize(expresion1, id, expresion2, token, instDec)
 		@expresion1 = expresion1
 		@id = id
 		@expresion2 = expresion2
@@ -455,7 +476,9 @@ class nodoForBits < nodoGeneral
 		@expresion2.printNodo(nivel+2)
 
 		printNivel(nivel+1)
-		puts "going: #{@token.str}"
+		puts "going:"
+		printNivel(nivel+2)
+		puts "#{@token.str}"
 
 		printNivel(nivel+1)
 		puts "instruction:"
@@ -467,11 +490,11 @@ class nodoForBits < nodoGeneral
 end
 
 
-class nodoWhile < nodoGeneral
+class NodoWhile < NodoGeneral
 
 	attr_accessor :repeat, :instDec1, :expresion, :do, :instDec2
 
-	def initialize(repeat = nil, instDec1 = nil, expresion, dow = nil, instDec2 = nil)
+	def initialize(repeat, instDec1, expresion, dow, instDec2)
 		@repeat = repeat
 		@instDec1 = instDec1
 		@expresion = expresion
@@ -508,7 +531,7 @@ class nodoWhile < nodoGeneral
 end
 
 
-class nodoId < nodoGeneral
+class NodoId < NodoGeneral
 
 	attr_accessor :valor
 
@@ -523,7 +546,7 @@ class nodoId < nodoGeneral
 end
 
 
-class nodoInt < nodoGeneral
+class NodoInt < NodoGeneral
 
 	attr_accessor :valor
 
@@ -538,7 +561,7 @@ class nodoInt < nodoGeneral
 end
 
 
-class nodoBool < nodoGeneral
+class NodoBool < NodoGeneral
 
 	attr_accessor :valor
 
@@ -553,7 +576,7 @@ class nodoBool < nodoGeneral
 end
 
 
-class nodoBits < nodoGeneral
+class NodoBits < NodoGeneral
 
 	attr_accessor :valor
 
@@ -568,7 +591,7 @@ class nodoBits < nodoGeneral
 end
 
 
-class nodoStr < nodoGeneral
+class NodoStr < NodoGeneral
 
 	attr_accessor :valor
 

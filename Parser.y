@@ -1,14 +1,12 @@
-=begin
 
-Lexer.rb
+# Parser.y
 
-Descripcion: Parser del lenguaje de programacion Bitiondo 
+# Descripcion: Parser del lenguaje de programacion Bitiondo 
 
-Autores:
-	Lautaro Villalon. 12-10427
-	Yarima Luciani. 13-10770
+# Autores:
+	# Lautaro Villalon. 12-10427
+	# Yarima Luciani. 13-10770
 
-=end
 
 
 class Parser
@@ -17,25 +15,14 @@ class Parser
 
 	prechigh 
 
-	right 'NOT'
-	right 'NOTBITS'
-	right 'DOLLAR'
-	right 'AT'
-	right 'UMINUS' 
-
-	left 'PRODUCT'
-	left 'DIVISION'
-	left 'MODULE' 
-	left 'PLUS'
-	left 'MINUS'
-	left 'LEFTDISPLACEMENT'
-	left 'RIGHTDISPLACEMENT'
-	nonassoc 'LESSTHAN'
-	nonassoc 'LESSOREQUALTHAN'
-	nonassoc 'MORETHAN'
-	nonassoc 'MOREOREQUALTHAN'
-	left 'EQUALS'
-	left 'NOTEQUAL'
+	right 'RIGHTBRACKET'
+	left 'LEFTBRACKET'
+	right 'NOT' 'NOTBITS' 'DOLLAR' 'AT' 'UMINUS' 
+	left 'PRODUCT' 'DIVISION' 'MODULE' 
+	left 'PLUS' 'MINUS'
+	left 'LEFTDISPLACEMENT' 'RIGHTDISPLACEMENT'
+	nonassoc 'LESSTHAN' 'LESSOREQUALTHAN' 'MORETHAN' 'MOREOREQUALTHAN'
+	left 'EQUALS' 'NOTEQUAL'
 	left 'ANDBITS'
 	left 'XORBITS'
 	left 'ORBITS'
@@ -54,180 +41,167 @@ class Parser
 			'XORBITS' 'ORBITS' 'SEMICOLON' 'COMMA' 'LEFTPARENTHESIS' 'RIGHTPARENTHESIS'
 
 
-	# Gramatica libre de contexto 
+	# Reglas para la gramatica libre de contexto y gramatica de atributos para cada una de ellas
 	
 	rule
 
 		# Regla inicial
 		S 
-		: 'BEGIN' bloquePrincipal 'END' 													{result = nodoInicial.new(val[1])}	
+		: 'BEGIN' bloquePrincipal 'END' 													{result = NodoInicial.new(val[1])}	
+		| 'BEGIN' 'END'																		{result = NodoInicial.new(nil)}
 		;
 
 		bloquePrincipal
-		: declaraciones instrucciones 														{result = nodoBloquePrincipal.new(val[0], val[1])}	
-		| instrucciones 																	{result = nodoBloquePrincipal.new(nil, val[0])}	
-		;
-
-		bloques
-		: 'BEGIN' bloquePrincipal 'END' 													{result = nodoBloques.new(val[1])}	
+		: declaraciones instrucciones 														{result = NodoBloquePrincipal.new(val[0], val[1])}	
+		| instrucciones 																	{result = NodoBloquePrincipal.new(nil, val[0])}	
 		;
 
 		declaraciones
-		: declaracion declaraciones 														{result = nodoDeclaraciones.new(val[0], val[1])}	
-		| declaracion 																		{result = nodoDeclaraciones.new(val[0], nil)}	
-		| 																					{result = nil}
+		: declaracion declaraciones 														{result = NodoDeclaraciones.new(val[0], val[1])}	
+		| declaracion 																		{result = NodoDeclaraciones.new(val[0], nil)}	
 		;
 
 		declaracion
-		: 'INT' identificador initInt 'SEMICOLON'											{result = nodoDeclaracion,new(val[0], val[1], nil, val[2])}	
-		| 'BOOL' identificador initBool 'SEMICOLON'											{result = nodoDeclaracion.new(val[0], val[1], nil, val[2])}	
-		| 'BITS' identificador 'LEFTBRACKET' entero 'RIGHTBRACKET' initBits 'SEMICOLON'		{result = nodoDeclaracion.new(val[0], val[1], val[3], val[5])}	
+		: 'INT' identificador initInt 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
+		| 'BOOL' identificador initBool 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
+		| 'BITS' identificador 'LEFTBRACKET' entero 'RIGHTBRACKET' initBits 'SEMICOLON'		{result = NodoDeclaracion.new(val[0], val[1], val[3], val[5])}	
 		;
 
 		initInt
-		: 'ASSIGN' entero																	{result = nodoInit.new(val[1])}	
+		: 'ASSIGN' entero																	{result = NodoInit.new(val[1])}	
 		| 																					{result = nil}	
 		;
 
 		initBool 
-		: 'ASSIGN' booleano 																{result = nodoInit.new(val[1])}	
+		: 'ASSIGN' booleano 																{result = NodoInit.new(val[1])}	
 		|																					{result = nil}	
 		;
 
 		initBits 
-		: 'ASSIGN' arregloBits 																{result = nodoInit.new(val[1])}	
+		: 'ASSIGN' arregloBits 																{result = NodoInit.new(val[1])}	
 		|																					{result = nil}	
 		;
 
 		instrucciones
-		: instruccion instrucciones 														{result = nodoInstrucciones.new(val[0], val[1])}	
-		| instruccion 																		{result = nodoInstrucciones.new(val[0], nil)}	
+		: instruccion instrucciones 														{result = NodoInstrucciones.new(val[0], val[1])}	
+		| instruccion 																		{result = NodoInstrucciones.new(val[0], nil)}	
 		;
 
 		instruccion
-		: bloque 																			{result = nodoInstruccion.new(val[0])}	
-		| expresion 'SEMICOLON'																{result = nodoInstruccion.new(val[0])}	
-		| asignacion 'SEMICOLON'															{result = nodoInstruccion.new(val[0])}	
-		| entrada 'SEMICOLON'																{result = nodoInstruccion.new(val[0])}	
-		| salida 'SEMICOLON'																{result = nodoInstruccion.new(val[0])}	
-		| condicional 'SEMICOLON'															{result = nodoInstruccion.new(val[0])}	
-		| iteracionFor 'SEMICOLON'															{result = nodoInstruccion.new(val[0])}	
-		| iteracionForBits 'SEMICOLON'														{result = nodoInstruccion.new(val[0])}	
-		| iteracionWhile 'SEMICOLON'														{result = nodoInstruccion.new(val[0])}	
-		| 																					{result = nil}	
+		: S 																				{result = NodoInstruccion.new(val[0])}	
+		| expresion 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
+		| asignacion 'SEMICOLON'															{result = NodoInstruccion.new(val[0])}	
+		| entrada 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
+		| salida 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
+		| condicional 																		{result = NodoInstruccion.new(val[0])}	
+		| iteracionFor 																		{result = NodoInstruccion.new(val[0])}	
+		| iteracionForBits 																	{result = NodoInstruccion.new(val[0])}	
+		| iteracionWhile 																	{result = NodoInstruccion.new(val[0])}									
 		; 
 
-		expresion
-		: expresion operadorBinario expresion 												{result = nodoExpresionBin.new(val[0], val[1], val[2])}	
-		| operadorUnario expresion 															{result = nodoExpresionUn.new(val[0], val[1])}	
+		expresion																		
+		: expresion 'PLUS' expresion  														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'MINUS' expresion														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}	
+		| expresion 'PRODUCT' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'DIVISION' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'MODULE' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'LESSTHAN' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'MORETHAN' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'LESSOREQUALTHAN' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'MOREOREQUALTHAN' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'EQUALS' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'NOTEQUAL' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'AND' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'OR' expresion  														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'ANDBITS' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'ORBITS' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'XORBITS' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'RIGHTDISPLACEMENT' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
+		| expresion 'LEFTDISPLACEMENT' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}	
+		| 'MINUS' expresion ='UMINUS'														{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}						
+		| 'AT' expresion																	{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
+		| 'NOT' expresion																	{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
+		| 'NOTBITS' expresion																{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
+		| 'DOLLAR' expresion 																{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
 		| identificador 
 		| entero
 		| booleano 
 		| arregloBits
 		| cadena
-		| identificador 'LEFTBRACKET' entero 'RIGHTBRACKET'        	# no se que soy
-		;
-
-		operadorBinario
-		: 'PLUS'  																			{result = nodoOperador.new(val[0])}
-		| 'MINUS'																			{result = nodoOperador.new(val[0])}
-		| 'PRODUCT' 																		{result = nodoOperador.new(val[0])}
-		| 'DIVISION' 																		{result = nodoOperador.new(val[0])}
-		| 'MODULE' 																			{result = nodoOperador.new(val[0])}
-		| 'LESSTHAN' 																		{result = nodoOperador.new(val[0])}
-		| 'MORETHAN' 																		{result = nodoOperador.new(val[0])}
-		| 'LESSOREQUALTHAN' 																{result = nodoOperador.new(val[0])}
-		| 'MOREOREQUALTHAN' 																{result = nodoOperador.new(val[0])}
-		| 'EQUALS' 																			{result = nodoOperador.new(val[0])}
-		| 'NOTEQUAL' 																		{result = nodoOperador.new(val[0])}
-		| 'AND' 																			{result = nodoOperador.new(val[0])}
-		| 'OR'  																			{result = nodoOperador.new(val[0])}
-		| 'ANDBITS' 																		{result = nodoOperador.new(val[0])}
-		| 'ORBITS' 																			{result = nodoOperador.new(val[0])}
-		| 'XORBITS' 																		{result = nodoOperador.new(val[0])}
-		| 'RIGHTDISPLACEMENT' 																{result = nodoOperador.new(val[0])}
-		| 'LEFTDISPLACEMENT' 																{result = nodoOperador.new(val[0])}
-		;
-
-		operadorUnario 
-		: 'MINUS' ='UMINUS'																	{result = nodoOperador.new(val[0])}
-		| 'AT' 																				{result = nodoOperador.new(val[0])}
-		| 'NOT'  																			{result = nodoOperador.new(val[0])}
-		| 'NOTBITS' 																		{result = nodoOperador.new(val[0])}
-		| 'DOLLAR'   																		{result = nodoOperador.new(val[0])}
+		| identificador 'LEFTBRACKET' expresion 'RIGHTBRACKET'        						{result = NodoExpresionUn.new(NodoOperador.new('ACCESS'), val[0], val[2])}
 		;
 
 		asignacion
-		: identificador 'ASSIGN' expresion 													{result = nodoAsignacion.new(val[0], val[2])}
+		: identificador 'ASSIGN' expresion 													{result = NodoAsignacion.new(val[0], val[2])}
 		;
 
 		entrada
-		: 'INPUT' identificador																{result = nodoEntrada.new(val[1])}
+		: 'INPUT' identificador																{result = NodoEntrada.new(val[1])}
 		;
 
 		salida 
-		: 'OUTPUT' expMultiple 																{result = nodoSalida.new(val[0], val[1])}
-		| 'OUTPUTLN' expMultiple 															{result = nodoSalida.new(val[0], val[1])}
+		: 'OUTPUT' expMultiple 																{result = NodoSalida.new(val[0], val[1])}
+		| 'OUTPUTLN' expMultiple 															{result = NodoSalida.new(val[0], val[1])}
 		;
 
 		expMultiple
-		: expresion 'COMMA' expMultiple 													{result = nodoExpMultiple.new(val[0], val[2])}
-		| expresion 																		{result = nodoExpMultiple.new(val[0], nil)}
+		: expresion 'COMMA' expMultiple 													{result = NodoExpMultiple.new(val[0], val[2])}
+		| expresion 																		{result = NodoExpMultiple.new(val[0], nil)}
 		;
 
 		condicional 
-		: 'IF' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion clausuraElse {result = nodoFor.new(val[2], val[4], val[5])} 
+		: 'IF' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion clausuraElse 		{result = NodoFor.new(val[2], val[4], val[5])} 
 		;
 
 		clausuraElse 
-		: 'ELSE' instruccionDeclaracion														{result = nodoClausuraElse.new(val[1])}
+		: 'ELSE' instruccionDeclaracion														{result = NodoClausuraElse.new(val[1])}
 		|																					{result = nil}
 		; 
 
 		iteracionFor 
-		: 'FOR' 'LEFTPARENTHESIS' asignacion 'SEMICOLON' expresion 'SEMICOLON' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion				{result = nodoFor.new(val[2], val[4], val[6], val[8])}
+		: 'FOR' 'LEFTPARENTHESIS' asignacion 'SEMICOLON' expresion 'SEMICOLON' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion				{result = NodoFor.new(val[2], val[4], val[6], val[8])}
 		;
 
 		iteracionForBits
-		: 'FORBITS' expresion 'AS' identificador 'FROM' expresion 'GOING' 'LEFTPARENTHESIS' 'HIGHER' 'RIGHTPARENTHESIS' instruccionDeclaracion 	{result = nodoForBits.new(val[1], val[3], val[5], val[8], val[10])}
-		| 'FORBITS' expresion 'AS' identificador 'FROM' expresion 'GOING' 'LEFTPARENTHESIS' 'LOWER' 'RIGHTPARENTHESIS' instruccionDeclaracion 	{result = nodoForBits.new(val[1], val[3], val[5], val[8], val[10])}
+		: 'FORBITS' expresion 'AS' identificador 'FROM' expresion 'GOING' 'HIGHER' instruccionDeclaracion 										{result = NodoForBits.new(val[1], val[3], val[5], val[7], val[8])}
+		| 'FORBITS' expresion 'AS' identificador 'FROM' expresion 'GOING' 'LOWER' instruccionDeclaracion 										{result = NodoForBits.new(val[1], val[3], val[5], val[7], val[8])}
 		;
 
 		iteracionWhile 
-		: 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 					{result = nodoWhile.new(val[0], val[1], val[4], val[6], val[7])}
-		| 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 													{result = nodoWhile.new(nil, nil, val[2], val[4], val[5])}
-		| 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 												{result = nodoWhile.new(val[0], val[1], val[4], nil, nil)}
+		: 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 					{result = NodoWhile.new(val[0], val[1], val[4], val[6], val[7])}
+		| 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 													{result = NodoWhile.new(nil, nil, val[2], val[4], val[5])}
+		| 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 												{result = NodoWhile.new(val[0], val[1], val[4], nil, nil)}
 		; 
 
 		instruccionDeclaracion 	
 		: instruccion 																		{result = val[0]}
-		| declaracion 																		{result = val[0]}
+		| declaracion 																		{result = val[0]}																		
 		;
 
 		identificador
-		: 'IDENTIFIER'																		{result = nodoId.new(val[0])}
+		: 'IDENTIFIER'																		{result = NodoId.new(val[0])}
 		;
 
 		entero
-		: 'INTEGER'																			{result = nodoInt.new(val[0])}
+		: 'INTEGER'																			{result = NodoInt.new(val[0])}
 		;
 
 		booleano 
-		: 'BOOLEAN' 																		{result = nodoBool.new(val[0])}
+		: 'BOOLEAN' 																		{result = NodoBool.new(val[0])}
 		;
 
 		arregloBits
-		: 'BITARRAY'																		{result = nodoBits.new(val[0])}
+		: 'BITARRAY'																		{result = NodoBits.new(val[0])}
 		;
 
 		cadena 
-		: 'STRING'																			{result = nodoStr.new(val[0])}
+		: 'STRING'																			{result = NodoStr.new(val[0])}
 		;
 		
-	end 
+end 
 
 
----- header 
+---- header ----
 
 require_relative "Lexer.rb"
 require_relative "astParser.rb"
@@ -241,28 +215,30 @@ class SyntacticError < RuntimeError
     def to_s
         puts "SYNTACTIC ERROR FOUND:"
         if @token.eql? "$" then
-            "Unexpected EOF"
+            puts "Unexpected EOF"
         else
-            "Line #{@token.line}, column #{@token.column}: unexpected token #{@token.symbol}: #{@token.value}"   
-        end
+            puts "ERROR: unexpected token '#{@token.str}' at line #{@token.line}, column #{@token.column}"   
+        end    
     end
 end
 
 
----- inner
+---- inner ----
 
 def initialize(lexer)
     @lexer = lexer
 end
 
 def on_error(id, token, stack)
-    raise SyntacticError::new(token)
+	SyntacticError.new(token).to_s
+	exit
+    #raise SyntacticError::new(token)
 end
 
 def next_token
-    if @lexer.has_next_token then
-        token = @lexer.next_token;
-        return [token.symbol,token]
+    if @lexer.haySiguiente then
+        token = @lexer.tokenSiguiente;
+        return [token.type, token]
     else
         return nil
     end
@@ -273,5 +249,5 @@ def parse
 end
 
 
----- footer
+---- footer ----
 

@@ -8,8 +8,9 @@ begin
         begin
             x = x^ m;
             m = m << 1;
+            
         end
 
-    x  = @x  ^@m;
+    x  = x[2+2]  ^@m;
                     outputln "El valor es :", x;
 end

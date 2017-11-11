@@ -27,6 +27,35 @@ Detalles de implementación del programa (Lexer.rb)
 - Para recolectar dichos tokens, se utilizó un solo regex llamado superRegex, que capta genéricamente todas las palabras sin discriminar a las palabras reservadas. Además, detecta los comentarios, espacios en blanco y símbolos. Para posteriormente ignorar la líneas que sean comentarios y eliminar los espacios. 
 
 
+
+Detalles de implementación del programa (Parser.y)
+-------------------------------------------------------------------
+
+- Se definió la precedencia de los operadores del lenguaje, de mayor a menor.
+
+- Se escribió la lista de tokens reconocidos por el Lexer.
+
+- Se escribió la gramática libre de contexto, definiendo todas las reglas para generar el lenguaje.
+
+- Se hizo la gramática de atributos para cada una de las reglas. 
+
+- Se utilizó la herramienta de Ruby racc para generar el Parser.rb a través del archivo Parser.y.
+
+
+
+Detalles de implementación del programa (astParser.rb)
+-------------------------------------------------------------------
+
+- Se creó una clase para imprimir cada nodo, la cual posee dos métodos, uno para inicializar el nodo y el otro para imprimirlo. 
+
+- Se creó una clase Nodo General que define el espaciado para imprimir un nodo. 
+
+- Todas las clases heredan las propiedades de la clase Nodo General.
+
+- Hay una clase por la mayoría de las reglas de la grámatica del lenguaje, exceptuando algunas que son imprimidas por un mismo nodo, como es el caso de las instrucciones output y outputln. 
+
+
+
 Estado actual del proyecto 
 -------------------------------------------------------------------
 
@@ -35,10 +64,12 @@ Estado actual del proyecto
 - Además, el programa permite la fácil adaptación de mejoras que optimicen los tiempos de corrida del mismo.
 
 
+
 Problemas presentes 
 -------------------------------------------------------------------
 
 - El programa no presenta ningún problema. 
+
 
 
 Tabla de Símbolos 
@@ -115,4 +146,6 @@ Tabla de Símbolos
 | Paréntesis que abre  	| left parenthesis 
 | ----------------------------------------------------------------------------------
 | Paréntesis que cierra | right parenthesis 
+
+
 
