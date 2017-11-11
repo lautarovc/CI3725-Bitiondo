@@ -1,0 +1,15 @@
+begin
+    int m = 1;
+    int x;
+    int bitCount = 0;
+
+    input x;
+    while (@x & @m == 1   )                 do
+        begin
+            x = x^ m;
+            m = m << 1;
+        end
+
+    x  = @x  ^@m;
+                    outputln "El valor es :", x;
+end

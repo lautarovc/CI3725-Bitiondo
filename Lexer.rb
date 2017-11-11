@@ -23,6 +23,7 @@ class Token
 	# Parametros de entrada: str, line, column
 	def initialize(str, line, column)
 
+		@contador = 0
 		@str = str
 		@line = line
 		@column = column
@@ -215,6 +216,8 @@ class Lexer
 		tokens.delete_if {|tok| tok.type == "Spaces"}
 
 	end
+
+	def next_token
 
 end
 
