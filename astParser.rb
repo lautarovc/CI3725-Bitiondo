@@ -279,9 +279,10 @@ class NodoAsignacion < NodoGeneral
 
 	attr_accessor :id, :expresion
 
-	def initialize(id, expresion)
+	def initialize(id, expresion, posicion)
 		@id = id
 		@expresion = expresion
+		@posicion = posicion
 	end
 
 	def printNodo(nivel)
@@ -289,6 +290,12 @@ class NodoAsignacion < NodoGeneral
 		puts "ASSIGN"
 
 		@id.printNodo(nivel+1)
+
+		if @posicion != nil then
+			printNivel(nivel+1)
+			puts "position:"
+			@posicion.printNodo(nivel+2)
+		end
 
 		printNivel(nivel+1)
 		puts "value:"

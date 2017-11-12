@@ -1,5 +1,7 @@
 begin 
 end 
+false
++ - * / % 
 ;
 yarimita
 yari95
@@ -12,9 +14,7 @@ yari
 int 
 bool
 bits
-true 
-false
-+ - * / % @ && || ! < > <= >= == != ~ & | ^ >> << [] $
+true @ && || ! < > <= >= == != ~ & | ^ >> << [] $
 179245
 0b0000
 0b1111

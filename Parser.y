@@ -54,6 +54,7 @@ class Parser
 		bloquePrincipal
 		: declaraciones instrucciones 														{result = NodoBloquePrincipal.new(val[0], val[1])}	
 		| instrucciones 																	{result = NodoBloquePrincipal.new(nil, val[0])}	
+		| declaraciones 																	{result = NodoBloquePrincipal.new(val[0], nil)}
 		;
 
 		declaraciones
@@ -64,7 +65,7 @@ class Parser
 		declaracion
 		: 'INT' identificador initInt 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
 		| 'BOOL' identificador initBool 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
-		| 'BITS' identificador 'LEFTBRACKET' entero 'RIGHTBRACKET' initBits 'SEMICOLON'		{result = NodoDeclaracion.new(val[0], val[1], val[3], val[5])}	
+		| 'BITS' identificador 'LEFTBRACKET' expresion 'RIGHTBRACKET' initBits 'SEMICOLON'	{result = NodoDeclaracion.new(val[0], val[1], val[3], val[5])}	
 		;
 
 		initInt
@@ -89,7 +90,6 @@ class Parser
 
 		instruccion
 		: S 																				{result = NodoInstruccion.new(val[0])}	
-		#| expresion 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
 		| asignacion 'SEMICOLON'															{result = NodoInstruccion.new(val[0])}	
 		| entrada 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
 		| salida 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
@@ -132,7 +132,8 @@ class Parser
 		;
 
 		asignacion
-		: identificador 'ASSIGN' expresion 													{result = NodoAsignacion.new(val[0], val[2])}
+		: identificador 'ASSIGN' expresion 													{result = NodoAsignacion.new(val[0], val[2], nil)}
+		| identificador 'LEFTBRACKET' expresion 'RIGHTBRACKET' 'ASSIGN' expresion 			{result = NodoAsignacion.new(val[0], val[5], val[2])}
 		;
 
 		entrada
@@ -150,7 +151,7 @@ class Parser
 		;
 
 		condicional 
-		: 'IF' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion clausuraElse 		{result = NodoFor.new(val[2], val[4], val[5])} 
+		: 'IF' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion clausuraElse 		{result = NodoCondicional.new(val[2], val[4], val[5])} 
 		;
 
 		clausuraElse 
@@ -170,7 +171,7 @@ class Parser
 		iteracionWhile 
 		: 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 					{result = NodoWhile.new(val[0], val[1], val[4], val[6], val[7])}
 		| 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 													{result = NodoWhile.new(nil, nil, val[2], val[4], val[5])}
-		| 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 												{result = NodoWhile.new(val[0], val[1], val[4], nil, nil)}
+		| 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'SEMICOLON'									{result = NodoWhile.new(val[0], val[1], val[4], nil, nil)}
 		; 
 
 		instruccionDeclaracion 	

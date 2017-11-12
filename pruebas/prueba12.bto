@@ -15,6 +15,6 @@ begin
 	end
 
 	bits xs[2]; 
-	fobits xs as x from 0 going higher 
+	forbits xs as x from 0 going higher 
 		outputln x;           # Imprime 0 y 0
 end 

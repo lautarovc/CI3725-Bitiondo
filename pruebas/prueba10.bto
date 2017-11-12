@@ -1,6 +1,6 @@
 begin 
 	bits bs[4]; 
-	bs[2] = 1;
+	bits bs[2];
 	
 	forbits bs as b from 0 going higher 
 		output b, " ";

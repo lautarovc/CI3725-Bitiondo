@@ -1,6 +1,6 @@
 begin 
 	bits foo[32]; 
-	foo[1] = 1;
+	bits foo[1];
 	
 	outputln foo; # Imprime  0b000000000000000000
 	outputln $foo; # Imprime 2

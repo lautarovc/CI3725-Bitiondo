@@ -2,7 +2,7 @@ begin
 	# Variables declaradas sin inicialización 
 	int a; 
 	bool b; 
-	bits c[2];
+	bits x[2];
 
 	# Variables declaradas con inicialización 
 	int d = 1; 

@@ -1,0 +1,6 @@
+begin 
+    int a = 2;
+    bool b = 3;
+    
+    output a == 3 && b;
+end 

@@ -1,0 +1,115 @@
+# This program has all!
+# Yay!
+# Made by: David Cabeza
+
+begin
+	# Cuatro casos de declaraciones
+	int a;
+	int b = 1;
+    bits c[5];
+	bits c[4] = 0b0001;
+	# Algunas declaraciones extrañas
+	bits xyz[x];
+
+	# Outputln es lo mismo que output
+	outputln imprimemeYA;
+
+	# Conditionals are crazy..
+	if (x)
+		m = 2;
+	else
+		n = 1;
+
+	# SHIFT AND REDUCE PROBLEM
+	if (cosa)
+		if (otracosa)
+			output "otracosa SHIFT AND REDUCE";
+		else
+			output "Este else pertenece a quien? Yo quiero pertenecer al if de afuera!!!!";
+
+	if (y)
+		x = y;
+
+	# Bloques dentro de bloques
+	begin
+		begin
+		output "Whatsuppppp xD", "Brooo";
+		end
+	end
+
+	begin
+		# Una declaracion
+		int o;
+
+		a = 2;
+		# Asignacion extraña
+		a[x] = 5;
+		# Asignacion correcta
+		a[1] = 2;
+		# Asignacion extraña
+		a[1] = x;
+	end
+	
+	# Un bloque vacio
+	begin
+	end
+
+	# Un input solito por la vida
+	input aquiPorfavor;
+
+	# Un output que va a varios valores
+	output tu, "yo", nosotros, 1, "Done!";
+
+	# Its FOR LOOP TIME
+	for (b = 0; b<3; 1)
+		outputln b; # Imprime 0, 1 y 2
+
+	# Its your turn forbits
+	forbits bs as b from 0 going higher
+		output b, " ";
+
+	# WHILES
+	begin 
+		int x;
+		
+		repeat # primer caso, atípico pero cómodo 
+			input x; 
+		while (5<12) do 
+			output x;
+
+		input x; 
+		while (YUMI) do # segundo caso, un `while do
+			begin 
+				output x; 
+				input x; 
+			end
+
+		repeat
+			k = j;
+		while(k>1)
+		do
+			begin
+			end
+
+		input z; 
+		repeat # tercer caso, parecido a un 
+			begin 
+				output x; 
+				input x; 
+			end 
+		while (z<0)
+	end
+
+	# OPERACIONES
+	a = 2;
+	c = c << a;
+	outputln c;
+	c = c >> 2;
+	mimi = mimo + pedro - casa + jose - 2 - 5;
+
+	x = @s;
+	y = $1;
+	z = casita ^ bs;
+	w = i[2+2];
+
+end

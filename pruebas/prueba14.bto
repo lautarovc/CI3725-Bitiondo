@@ -1,0 +1,10 @@
+begin 
+    int a;
+    bits c[4] = 0b0001;
+
+    a = 2;
+    c = c << a;
+    outputln c;
+    c = c >> 2;
+    outputln c, "Done!";
+end

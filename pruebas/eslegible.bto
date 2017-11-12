@@ -1,0 +1,17 @@
+begin
+	begin
+		begin
+			begin
+				begin
+					begin
+						int a = 2;
+						begin
+							forbits bs as b from 0 going higher
+								output b, " ", z;
+						end
+					end
+				end
+			end
+		end
+	end
+end
