@@ -89,7 +89,7 @@ class Parser
 
 		instruccion
 		: S 																				{result = NodoInstruccion.new(val[0])}	
-		| expresion 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
+		#| expresion 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
 		| asignacion 'SEMICOLON'															{result = NodoInstruccion.new(val[0])}	
 		| entrada 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
 		| salida 'SEMICOLON'																{result = NodoInstruccion.new(val[0])}	
