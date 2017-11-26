@@ -63,24 +63,14 @@ class Parser
 		;
 
 		declaracion
-		: 'INT' identificador initInt 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
-		| 'BOOL' identificador initBool 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
-		| 'BITS' identificador 'LEFTBRACKET' expresion 'RIGHTBRACKET' initBits 'SEMICOLON'	{result = NodoDeclaracion.new(val[0], val[1], val[3], val[5])}	
+		: 'INT' identificador init 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
+		| 'BOOL' identificador init 'SEMICOLON'											{result = NodoDeclaracion.new(val[0], val[1], nil, val[2])}	
+		| 'BITS' identificador 'LEFTBRACKET' expresionP 'RIGHTBRACKET' init 'SEMICOLON'	{result = NodoDeclaracion.new(val[0], val[1], val[3], val[5])}	
 		;
 
-		initInt
-		: 'ASSIGN' entero																	{result = NodoInit.new(val[1])}	
+		init
+		: 'ASSIGN' expresionP																{result = NodoInit.new(val[1])}	
 		| 																					{result = nil}	
-		;
-
-		initBool 
-		: 'ASSIGN' booleano 																{result = NodoInit.new(val[1])}	
-		|																					{result = nil}	
-		;
-
-		initBits 
-		: 'ASSIGN' arregloBits 																{result = NodoInit.new(val[1])}	
-		|																					{result = nil}	
 		;
 
 		instrucciones
@@ -99,41 +89,46 @@ class Parser
 		| iteracionWhile 																	{result = NodoInstruccion.new(val[0])}									
 		; 
 
+		expresionP
+		: 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS'									{result = val[1]}
+		| expresion 																		{result = val[0]}
+		;
+
 		expresion																		
-		: expresion 'PLUS' expresion  														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'MINUS' expresion														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}	
-		| expresion 'PRODUCT' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'DIVISION' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'MODULE' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'LESSTHAN' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'MORETHAN' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'LESSOREQUALTHAN' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'MOREOREQUALTHAN' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'EQUALS' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'NOTEQUAL' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'AND' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'OR' expresion  														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'ANDBITS' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'ORBITS' expresion 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'XORBITS' expresion 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'RIGHTDISPLACEMENT' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}
-		| expresion 'LEFTDISPLACEMENT' expresion 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2])}	
-		| 'MINUS' expresion ='UMINUS'														{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}						
-		| 'AT' expresion																	{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
-		| 'NOT' expresion																	{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
-		| 'NOTBITS' expresion																{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
-		| 'DOLLAR' expresion 																{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil)}
+		: expresionP 'PLUS' expresionP  													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'INT')}
+		| expresionP 'MINUS' expresionP														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'INT')}	
+		| expresionP 'PRODUCT' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'INT')}
+		| expresionP 'DIVISION' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'INT')}
+		| expresionP 'MODULE' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'INT')}
+		| expresionP 'LESSTHAN' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'BOOL')}
+		| expresionP 'MORETHAN' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'BOOL')}
+		| expresionP 'LESSOREQUALTHAN' expresionP 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'BOOL')}
+		| expresionP 'MOREOREQUALTHAN' expresionP 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Aritmetica', 'BOOL')}
+		| expresionP 'EQUALS' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Comparacion', 'BOOL')}
+		| expresionP 'NOTEQUAL' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Comparacion', 'BOOL')}
+		| expresionP 'AND' expresionP 														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Logica', 'BOOL')}
+		| expresionP 'OR' expresionP  														{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Logica', 'BOOL')}
+		| expresionP 'ANDBITS' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Bits', 'BITS')}
+		| expresionP 'ORBITS' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Bits', 'BITS')}
+		| expresionP 'XORBITS' expresionP 													{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'Bits', 'BITS')}
+		| expresionP 'RIGHTDISPLACEMENT' expresionP 										{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'BitsInt', 'BITS')}
+		| expresionP 'LEFTDISPLACEMENT' expresionP 											{result = NodoExpresionBin.new(val[0], NodoOperador.new(val[1]), val[2], 'BitsInt', 'BITS')}	
+		| 'MINUS' expresionP ='UMINUS'														{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil, 'Aritmetica', 'INT')}						
+		| 'AT' expresionP																	{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil, 'Aritmetica', 'BITS')}
+		| 'NOT' expresionP																	{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil, 'Logica', 'BOOL')}
+		| 'NOTBITS' expresionP																{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil, 'Bits', 'BITS')}
+		| 'DOLLAR' expresionP 																{result = NodoExpresionUn.new(NodoOperador.new(val[0]), val[1], nil, 'Bits', 'INT')}
 		| identificador 
 		| entero
 		| booleano 
 		| arregloBits
 		| cadena
-		| identificador 'LEFTBRACKET' expresion 'RIGHTBRACKET'        						{result = NodoExpresionUn.new(NodoOperador.new('ACCESS'), val[0], val[2])}
+		| expresionP 'LEFTBRACKET' expresionP 'RIGHTBRACKET'        						{result = NodoExpresionBin.new(val[0], NodoOperador.new('ACCESS'), val[2], 'BitsInt', 'INT')}
 		;
 
 		asignacion
-		: identificador 'ASSIGN' expresion 													{result = NodoAsignacion.new(val[0], val[2], nil)}
-		| identificador 'LEFTBRACKET' expresion 'RIGHTBRACKET' 'ASSIGN' expresion 			{result = NodoAsignacion.new(val[0], val[5], val[2])}
+		: identificador 'ASSIGN' expresionP 												{result = NodoAsignacion.new(val[0], val[2], nil)}
+		| identificador 'LEFTBRACKET' expresionP 'RIGHTBRACKET' 'ASSIGN' expresionP 		{result = NodoAsignacion.new(val[0], val[5], val[2])}
 		;
 
 		entrada
@@ -146,12 +141,12 @@ class Parser
 		;
 
 		expMultiple
-		: expresion 'COMMA' expMultiple 													{result = NodoExpMultiple.new(val[0], val[2])}
-		| expresion 																		{result = NodoExpMultiple.new(val[0], nil)}
+		: expresionP 'COMMA' expMultiple 													{result = NodoExpMultiple.new(val[0], val[2])}
+		| expresionP 																		{result = NodoExpMultiple.new(val[0], nil)}
 		;
 
 		condicional 
-		: 'IF' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion clausuraElse 		{result = NodoCondicional.new(val[2], val[4], val[5])} 
+		: 'IF' 'LEFTPARENTHESIS' expresionP 'RIGHTPARENTHESIS' instruccionDeclaracion clausuraElse 		{result = NodoCondicional.new(val[2], val[4], val[5])} 
 		;
 
 		clausuraElse 
@@ -160,18 +155,18 @@ class Parser
 		; 
 
 		iteracionFor 
-		: 'FOR' 'LEFTPARENTHESIS' asignacion 'SEMICOLON' expresion 'SEMICOLON' expresion 'RIGHTPARENTHESIS' instruccionDeclaracion				{result = NodoFor.new(val[2], val[4], val[6], val[8])}
+		: 'FOR' 'LEFTPARENTHESIS' asignacion 'SEMICOLON' expresionP 'SEMICOLON' expresionP 'RIGHTPARENTHESIS' instruccionDeclaracion				{result = NodoFor.new(val[2], val[4], val[6], val[8])}
 		;
 
 		iteracionForBits
-		: 'FORBITS' expresion 'AS' identificador 'FROM' expresion 'GOING' 'HIGHER' instruccionDeclaracion 										{result = NodoForBits.new(val[1], val[3], val[5], val[7], val[8])}
-		| 'FORBITS' expresion 'AS' identificador 'FROM' expresion 'GOING' 'LOWER' instruccionDeclaracion 										{result = NodoForBits.new(val[1], val[3], val[5], val[7], val[8])}
+		: 'FORBITS' expresionP 'AS' identificador 'FROM' expresionP 'GOING' 'HIGHER' instruccionDeclaracion 										{result = NodoForBits.new(val[1], val[3], val[5], val[7], val[8])}
+		| 'FORBITS' expresionP 'AS' identificador 'FROM' expresionP 'GOING' 'LOWER' instruccionDeclaracion 										{result = NodoForBits.new(val[1], val[3], val[5], val[7], val[8])}
 		;
 
 		iteracionWhile 
-		: 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 					{result = NodoWhile.new(val[0], val[1], val[4], val[6], val[7])}
-		| 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 													{result = NodoWhile.new(nil, nil, val[2], val[4], val[5])}
-		| 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresion 'RIGHTPARENTHESIS' 'SEMICOLON'									{result = NodoWhile.new(val[0], val[1], val[4], nil, nil)}
+		: 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresionP 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 					{result = NodoWhile.new(val[0], val[1], val[4], val[6], val[7])}
+		| 'WHILE' 'LEFTPARENTHESIS' expresionP 'RIGHTPARENTHESIS' 'DO' instruccionDeclaracion 													{result = NodoWhile.new(nil, nil, val[2], val[4], val[5])}
+		| 'REPEAT' instruccionDeclaracion 'WHILE' 'LEFTPARENTHESIS' expresionP 'RIGHTPARENTHESIS' 'SEMICOLON'									{result = NodoWhile.new(val[0], val[1], val[4], nil, nil)}
 		; 
 
 		instruccionDeclaracion 	

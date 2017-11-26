@@ -7,7 +7,7 @@ Yarima Luciani. Carnet: 13-10770
 Universidad Simón Bolívar
 Departamento de Computación y Tecnología de la Información 
 CI-3725: Traductores e Interpretadores
-Etapa 1 del proyecto Bitiondo
+Proyecto Bitiondo
 Sept-Dic 2017 
 
 
@@ -53,6 +53,39 @@ Detalles de implementación del programa (astParser.rb)
 - Todas las clases heredan las propiedades de la clase Nodo General.
 
 - Hay una clase por la mayoría de las reglas de la grámatica del lenguaje, exceptuando algunas que son imprimidas por un mismo nodo, como es el caso de las instrucciones output y outputln. 
+
+
+
+Detalles de implementación del programa (symbolTable.rb)
+-------------------------------------------------------------------
+
+- Se creó una clase TablaSimbolos, la cual posee los procedimientos requeridos en la especificación del proyecto y otros adicionales
+
+- Los métodos adicionales son: 
+	- esModificable: verifica si la variable declarada puede ser modificada (usada para verificar que no se modifiquen las variables de iteración).
+	- printNivel: imprime la identación del ast.
+	- printTabla: imprime una tabla de símbolos con las declaraciones.
+
+
+
+Detalles de implementación del programa (semanticAnalyzer.rb)
+-------------------------------------------------------------------
+
+- Se realizó un manejador para recopilar los errores semánticos que pueda tener cada nodo del ast.
+
+- Se implementaron otros métodos adicionales:
+	- tipoExpresion: devuelve el tipo de una expresion.
+	- chequeoTipoTablas: compara los tipos de dos nodos identificador.
+	- encontrarTipoTablas: devuelve el tipo de un nodo identificador.
+	- encontrarModificableTablas: revisa si un nodo identificador es modificable, es decir, si se le puede modificar su valor.
+	- chequeoTipoEquivalente: compara los tipos de dos nodos.
+
+
+
+Detalles de implementación del programa (semanticErrors.rb)
+-------------------------------------------------------------------
+
+- Define los errores semánticos que se pueden presentar.
 
 
 

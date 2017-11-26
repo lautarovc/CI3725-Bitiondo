@@ -2,10 +2,43 @@ begin
 	# Variables declaradas sin inicialización 
 	int a; 
 	bool b; 
-	bits x[2];
+	bits x[32];
 
 	# Variables declaradas con inicialización 
-	int d = 1; 
-	bool e = true; 
-	bits f[2] = 0b01;
+	int d = 15%$0b10; 
+	bool e = true && b;
+	bits f[32] = x << 3;
+	int mm;
+	bool kk = 0b00 == 0b00 != false;
+	bits i[4] = 0b1111;
+	bool j;
+	
+	bool y = (b);
+	
+	f[3] = x[5];
+
+	#f = 0b001 | 0b010;
+	
+	outputln true || e, mm + 3 - 5 == (8), @15 & x,  0b01000000000000000000000000000000 | x << 3;
+	
+	
+    for (i=0;i<20;i)
+        begin
+            int i = 2;
+            i = 3;
+        end
+        
+    i = 0b1111;
+    
+    forbits i as j from 5 going higher
+        begin
+            bits j[4];
+        end
+        
+    if (j < 5) 
+        output d;
+    else 
+        output f 
+    
+    
 end

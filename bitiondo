@@ -15,6 +15,7 @@ Autores:
 
 require_relative 'Lexer.rb'
 require_relative 'Parser.rb'
+require_relative 'semanticAnalyzer.rb'
 
 
 def main
@@ -40,7 +41,7 @@ def main
 
 	lexer.leer()
 
-	# SI HAY ERRORES, IMPRIME LOS ERRORES, CASO CONTRARIO, LOS TOKENS
+	# SI HAY ERRORES DE TOKENS, IMPRIME LOS ERRORES, CASO CONTRARIO, IMPRIME EL ARBOL SINTACTICO
 	if (lexer.errorList.length > 0)
 		for x in lexer.errorList
 			x.toString()
@@ -49,11 +50,24 @@ def main
 	else
 
 		parser = Parser.new(lexer)
-		ast = parser.parse
-		ast.printNodo(0)		
+		ast = parser.parse	
+
+		# IMPRESION DE TOKENS:
 		#for x in lexer.tokens
 		#	x.toString()
 		#end
+
+		semAnalyzer = AnalizadorSemantico.new(ast)
+		semAnalyzer.analizar()
+
+		# SI HAY ERRORES SEMANTICOS, IMPRIMIRLOS
+		if (semAnalyzer.errores.length > 0)
+			for x in semAnalyzer.errores
+				x.to_s
+			end
+		else
+			ast.printNodo(0)
+		end
 	end
 
 end

@@ -3,7 +3,7 @@ begin
 	
 	repeat # primer caso, atípico pero cómodo 
 		input x; 
-	while (x > 0) do 
+	while (@x) do 
 		output x;
 
 	input x; 

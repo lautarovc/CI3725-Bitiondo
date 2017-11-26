@@ -1,9 +1,10 @@
 begin 
     int a;
-    bits c[4] = 0b0001;
+    bits c[true] = 0b0001;
+    bool g = true;
 
-    a = 2;
-    c = c << a;
+    a = a[true];
+    c[true] = a << g;
     outputln c;
     c = c >> 2;
     outputln c, "Done!";

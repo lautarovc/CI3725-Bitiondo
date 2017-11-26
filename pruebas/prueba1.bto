@@ -4,6 +4,9 @@ begin
 	bits b[4] = 0b0101;
 	bool c = true;
 	bool d = false;
+	int x;
+
+
 
 	int e;
 	bits f[6];
