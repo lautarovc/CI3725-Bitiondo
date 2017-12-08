@@ -11,6 +11,26 @@ Proyecto Bitiondo
 Sept-Dic 2017 
 
 
+Uso del programa (bitiondo)
+-------------------------------------------------------------------
+Para la ejecución del interpretador el programa deberá llamarse bitiondo (no bitiondo.rb, Bitiondo, Bitiondo.hs, etc) y recibirá como primer
+argumento el nombre del archivo con el código en Bitiondo a analizar. 
+
+La salida del programa dependerá únicamente de las instrucciones input, output y outputln.
+
+Adicionalmente, se debe proveer opciones de ejecución al interpretador con los siguientes comportamientos:
+• -t o --tokens: Debe imprimir sólo la lista de tokens tal como en la
+primera entrega.
+• -a o --ast: Debe imprimir sólo el árbol sintáctico abstracto tal como en
+la segunda entrega.
+• -s o --symbols: Debe imprimir sólo el árbol sintáctico abstracto con las tablas de símbolos tal como en la tercera entrega.
+
+Estas opciones se pueden combinar, es decir bitiondo --tokens --symbols programa.bto debe imprimir sólo la lista de tokens y el árbol 
+sintáctico abstracto con las tablas de símbolos. Si se presentan las opciones --ast y --symbols a la vez, se debe imprimir 
+sólo la versión del árbol que contiene las tablas de símbolos.
+
+
+
 Detalles de implementación del programa (Lexer.rb)
 -------------------------------------------------------------------
 
@@ -104,10 +124,12 @@ Detalles de implementación del programa (interpreter.rb)
     - entero: comprueba si un string es entero o no
 
 
+
 Detalles de implementación del programa (runtimeErrors.rb)
 -------------------------------------------------------------------
 
-- 
+- Define los errores de ejecución que se puedan presentar 
+
 
 
 Estado actual del proyecto 
