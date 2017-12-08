@@ -89,6 +89,27 @@ Detalles de implementación del programa (semanticErrors.rb)
 
 
 
+Detalles de implementación del programa (interpreter.rb)
+-------------------------------------------------------------------
+
+- Se creó una clase llamada Interpretador, la cual posee una función para interpretar a cada nodo
+
+- Se realizaron varios métodos ayudantes:
+    - tamanioExpresion: devuelve el tamaño de una expresión de tipo bits
+    - tamanioExpresionBin: devuelve el tamaño de una expresión binaria de tipo bits
+    - tamanioExpresionUn: devuelve el tamaño de una expresión unaria de tipo bits
+    - encontrarTamanioTablas: busca el tamaño de una variable de tipo bits en la tabla de símbolos
+    - encontrarValorTablas: devuelve el valor que tenga asignado una variable en la tabla de símbolos
+    - booleano: convierte un string en un booleano
+    - entero: comprueba si un string es entero o no
+
+
+Detalles de implementación del programa (runtimeErrors.rb)
+-------------------------------------------------------------------
+
+- 
+
+
 Estado actual del proyecto 
 -------------------------------------------------------------------
 
