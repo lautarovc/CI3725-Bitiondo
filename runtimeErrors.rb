@@ -2,7 +2,7 @@
 
 runtimeErrors.rb
 
-Descripcion: Errores semanticos del lenguaje de programacion Bitiondo 
+Descripcion: Errores de ejecucion del lenguaje de programacion Bitiondo 
 
 Autores:
 	Lautaro Villalon. 12-10427
@@ -60,7 +60,7 @@ class ErrorEjecucion
 				else
 					puts "Error en línea #{@nodo.line}, columna #{@nodo.column}: Operador '#{@nodo.opBinario.operador.str}' espera expresión 'int' menor o igual al tamaño de la expresión 'bits'."
 				end
-				
+
 			when "Error de longitud de bits: expresion dollar"
 				puts "Error en línea #{@nodo.line}, columna #{@nodo.column}: Operador '#{@nodo.opUnario.operador.str}' espera expresiones 'bits' de tamaño '32'."
 
