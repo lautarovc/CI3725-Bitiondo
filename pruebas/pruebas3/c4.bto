@@ -1,0 +1,19 @@
+begin
+  int foo = 0;
+  bits bar[20];
+  bits qux[20];
+
+  forbits bar as baz from 0 going higher
+    foo = 10;
+
+
+  forbits bar as foo from 0 going higher
+    outputln foo;
+
+  forbits 0b0000 as foo from 0 going higher
+    forbits qux as foo from 10 going lower
+      outputln foo;
+
+  forbits 0b0000 as bar from foo going higher
+    outputln "This should work";
+end

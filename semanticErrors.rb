@@ -101,5 +101,7 @@ class ErrorSemantico
 			# 	puts "Error en línea #{@nodo.line}, columna #{@nodo.column}: Operador '#{@nodo.opUnario.operador.str}' espera expresiones 'bits' de tamaño '32'."
 
 		end
+
+		exit(1)
 	end
 end

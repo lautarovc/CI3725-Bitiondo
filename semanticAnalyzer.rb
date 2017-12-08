@@ -64,14 +64,20 @@ class AnalizadorSemantico
 	def manejadorDeclaracion(nodoDeclaracion, idTabla)
 		if tablasSimbolos[idTabla].contiene(nodoDeclaracion.id.valor.str) then
 			tipoExistente = tablasSimbolos[idTabla].encontrar(nodoDeclaracion.id.valor.str)[0]
-			tipoNuevo = nodoDeclaracion.tipo
-			if tipoExistente.str == tipoNuevo.str then
+			# tipoNuevo = nodoDeclaracion.tipo
+			# if tipoExistente.str == tipoNuevo.str then
+			# 	#ERROR DE REDECLARACION
+			# 	error = ErrorSemantico.new(nodoDeclaracion.id, "Redeclaracion de variable dentro del bloque", nil)
+			# 	@errores.push(error)
+			# else 
+			# 	tablasSimbolos[idTabla].actualizar(nodoDeclaracion.id, nodoDeclaracion.tipo, nodoDeclaracion.tamanio, nodoDeclaracion.asignacion)
+			# end
+
+			if tipoExistente != nil then
 				#ERROR DE REDECLARACION
-				error = ErrorSemantico.new(nodoDeclaracion.id, "Redeclaracion de variable dentro del bloque", nil)
-				@errores.push(error)
-			else 
-				tablasSimbolos[idTabla].actualizar(nodoDeclaracion.id, nodoDeclaracion.tipo, nodoDeclaracion.tamanio, nodoDeclaracion.asignacion)
-			end
+			 	error = ErrorSemantico.new(nodoDeclaracion.id, "Redeclaracion de variable dentro del bloque", nil)
+			 	@errores.push(error)
+			 end
 		end
 
 		if nodoDeclaracion.asignacion != nil then
@@ -104,18 +110,6 @@ class AnalizadorSemantico
 
 			end
 
-			# ERROR DE INICIALIZACION: TAMANIO DIFERENTE DE BITS.
-
-			# if nodoDeclaracion.tipo.str.upcase == 'BITS' then
-			# 	tamanioExistente = Integer(nodoDeclaracion.tamanio.valor.str)
-			# 	tamanioAsignado = tamanioExpresion(nodoDeclaracion.asignacion.valor, idTabla)
-
-			# 	if tamanioAsignado != "Error de Tamanio" && tamanioExistente != tamanioAsignado then
-			# 		# ERROR DE INICIALIZACION TAMANIO BITS
-			# 		error = ErrorSemantico.new(nodoDeclaracion.asignacion.valor, "Error de longitud de bits: inicializacion", nil)
-			# 		@errores.push(error)
-			# 	end
-			# end
 		end
 
 		if nodoDeclaracion.tamanio != nil then
@@ -345,7 +339,7 @@ class AnalizadorSemantico
 
 		elsif nodoExpresionBin.tipo == 'Comparacion' then
 
-			if tipoExpresion1 != nil && tipoExpresion2 != nil && tipoExpresion1 != tipoExpresion2 then
+			if tipoExpresion1 != nil && tipoExpresion2 != nil && tipoExpresion1.upcase != tipoExpresion2.upcase then
 				#ERROR DE TIPO EXPRESION, COMPARACION
 				error = ErrorSemantico.new(nodoExpresionBin, "Error de tipo: expresion binaria con operadores == o !=", nil)
 				@errores.push(error)
@@ -471,6 +465,35 @@ class AnalizadorSemantico
 			end
 
 		end
+		
+		# REVISION VALOR DE PASO
+		paso = nodoFor.expresion2
+
+		if paso.is_a?(NodoExpresionBin) || paso.is_a?(NodoExpresionUn) then
+			if paso.tipoResultado != 'INT' then
+				# ERROR EN VALOR DE PASO, DEBE SER INT
+				error = ErrorSemantico.new(paso, "Error de tipo: valor de paso del for", nil)
+				@errores.push(error)
+			end
+
+			manejadorExpresion(paso, idTabla)
+
+		elsif paso.is_a?(NodoId) then
+			tipo = encontrarTipoTablas(paso.valor.str, idTabla)
+
+			manejadorId(paso, idTabla)
+
+			if tipo != nil && !chequeoTipoEquivalente(tipo, 'INTEGER') then
+				# ERROR EN VALOR DE PASO, DEBE SER INT
+				error = ErrorSemantico.new(paso, "Error de tipo: valor de paso del for", nil)
+				@errores.push(error)
+			end
+
+		elsif !paso.is_a?(NodoInt) then
+			# ERROR EN VALOR DE PASO, DEBE SER INT
+			error = ErrorSemantico.new(paso, "Error de tipo: valor de paso del for", nil)
+			@errores.push(error)
+		end
 
 		# CREACION DE TABLA DE SIMBOLOS DEL FOR
 		@contadorTablas = @contadorTablas + 1
@@ -511,34 +534,6 @@ class AnalizadorSemantico
 			@errores.push(error)
 		end
 
-		# REVISION VALOR DE PASO
-		paso = nodoFor.expresion2
-
-		if paso.is_a?(NodoExpresionBin) || paso.is_a?(NodoExpresionUn) then
-			if paso.tipoResultado != 'INT' then
-				# ERROR EN VALOR DE PASO, DEBE SER INT
-				error = ErrorSemantico.new(paso, "Error de tipo: valor de paso del for", nil)
-				@errores.push(error)
-			end
-
-			manejadorExpresion(paso, idTabla)
-
-		elsif paso.is_a?(NodoId) then
-			tipo = encontrarTipoTablas(paso.valor.str, idTabla)
-
-			manejadorId(paso, idTabla)
-
-			if tipo != nil && !chequeoTipoEquivalente(tipo, 'INTEGER') then
-				# ERROR EN VALOR DE PASO, DEBE SER INT
-				error = ErrorSemantico.new(paso, "Error de tipo: valor de paso del for", nil)
-				@errores.push(error)
-			end
-
-		elsif !paso.is_a?(NodoInt) then
-			# ERROR EN VALOR DE PASO, DEBE SER INT
-			error = ErrorSemantico.new(paso, "Error de tipo: valor de paso del for", nil)
-			@errores.push(error)
-		end
 
 		manejadorInstDec(nodoFor.instDec, idTabla)
 		@tablasSimbolos.pop()
@@ -764,87 +759,5 @@ class AnalizadorSemantico
 
 		return false
 	end	
-
-	# FUNCIONES DE VERIFICACION DE TAMANIO
-
-	# def tamanioExpresion(nodoExpresion, idTabla)
-	# 	if nodoExpresion.is_a?(NodoExpresionBin) then
-	# 		return tamanioExpresionBin(nodoExpresion, idTabla)
-
-	# 	elsif nodoExpresion.is_a?(NodoExpresionUn) then
-	# 		return tamanioExpresionUn(nodoExpresion, idTabla)
-
-	# 	elsif nodoExpresion.is_a?(NodoId) then
-
-	# 		return encontrarTamanioTablas(nodoExpresion.valor.str, idTabla)
-
-	# 	elsif nodoExpresion.is_a?(NodoBits) then
-	# 		return nodoExpresion.tamanio
-	# 	else
-	# 		return "Error de Tamanio"
-	# 	end
-	# end
-
-	# def tamanioExpresionBin(nodoExpresion, idTabla)
-
-	# 	if nodoExpresion.tipo != "Bits" && nodoExpresion.tipo != "BitsInt" then
-	# 		return "Error de Tamanio"
-	# 	end
-
-	# 	tamanio1 = tamanioExpresion(nodoExpresion.expresion1, idTabla)
-	# 	tamanio2 = tamanioExpresion(nodoExpresion.expresion2, idTabla)
-
-	# 	if nodoExpresion.tipo == "BitsInt" then
-	# 		return tamanio1
-	# 	end
-
-	# 	if tamanio1 != "Error de Tamanio" && tamanio1 != tamanio2 then
-
-	# 		error = ErrorSemantico.new(nodoExpresion, "Error de longitud de bits: expresion", nil)
-	# 		@errores.push(error)
-	# 		return "Tamanios diferentes"
-	# 	else
-	# 		return tamanio1
-	# 	end
-	# end
-
-	# def tamanioExpresionUn(nodoExpresion, idTabla)
-	# 	if nodoExpresion.tipo == "Aritmetica" && nodoExpresion.tipoResultado == "BITS" then
-	# 		return 32
-	# 	end
-
-	# 	if nodoExpresion.tipo != "Bits" then
-	# 		return "Error de Tamanio"
-	# 	end
-
-	# 	tamanio = tamanioExpresion(nodoExpresion.expresion, idTabla)
-
-	# 	if nodoExpresion.tipo == "Bits" && nodoExpresion.tipoResultado == "INT" then
-	# 		if tamanio != 32 then
-	# 			error = ErrorSemantico.new(nodoExpresion, "Error de longitud de bits: expresion dollar", nil)
-	# 			@errores.push(error)
-	# 			return "Error de Tamanio"
-	# 		end
-	# 	end
-
-	# 	return tamanio
-	# end
-
-	# def encontrarTamanioTablas(identificador, idTabla)
-		
-	# 	for i in (0..idTabla).reverse_each
-	# 		if tablasSimbolos[i].contiene(identificador) then
-
-	# 			tamanio = tablasSimbolos[i].encontrar(identificador)[1]
-	# 			if tamanio != nil then
-	# 				return Integer(tamanio)
-	# 			else
-	# 				return "Error de Tamanio"
-	# 			end
-	# 		end
-	# 	end
-
-	# 	return "Error de Tamanio"
-	# end	
 
 end

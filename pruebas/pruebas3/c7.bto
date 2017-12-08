@@ -1,0 +1,16 @@
+begin
+  int foo = 10;
+  bits bar[10];
+
+  # 0.25
+  if (20 + foo) output "Error de tipo";
+
+  # 0.25
+  forbits foo as fs from 0 going higher output "foo no es de tipo bits";
+
+  # 0.25
+  forbits bar as fs from true going higher output "Expresion from debe ser int"; 
+
+  # 0.25
+  while (foo) do output "foo no es de tipo boolean";
+end

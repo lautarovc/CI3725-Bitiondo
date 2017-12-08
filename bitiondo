@@ -16,10 +16,11 @@ Autores:
 require_relative 'Lexer.rb'
 require_relative 'Parser.rb'
 require_relative 'semanticAnalyzer.rb'
+require_relative 'interpreter.rb'
 
 
 def main
-	ARGV[0] =~ /\w+\.bto/
+	ARGV[-1] =~ /\w+\.bto/
 
 	# VERIFICACION DE EXTENSION DE ARCHIVO
 	if $&.nil?
@@ -28,13 +29,15 @@ def main
 	end
 
 	# VERIFICACION DE EXISTENCIA DE ARCHIVO
-	if (!File.exist?(ARGV[0]))
+	if (!File.exist?(ARGV[-1]))
 		puts "Archivo no encontrado."
 		return
 	end
 
+	*flags, file  = ARGV
+
 	# LECTURA POR ARREGLO DE LINEAS DE ARCHIVO
-	file = IO.readlines(ARGV[0])
+	file = IO.readlines(ARGV[-1])
 
 	# CORRIDA DEL LEXER
 	lexer = Lexer.new(file)
@@ -47,17 +50,13 @@ def main
 			x.toString()
 		end
 
-	else
-
+	else	
 		parser = Parser.new(lexer)
+
 		ast = parser.parse	
 
-		# IMPRESION DE TOKENS:
-		#for x in lexer.tokens
-		#	x.toString()
-		#end
-
 		semAnalyzer = AnalizadorSemantico.new(ast)
+
 		semAnalyzer.analizar()
 
 		# SI HAY ERRORES SEMANTICOS, IMPRIMIRLOS
@@ -65,8 +64,31 @@ def main
 			for x in semAnalyzer.errores
 				x.to_s
 			end
+
 		else
-			ast.printNodo(0)
+
+			# IMPRESION DE TOKENS
+			if flags.include?("-t") || flags.include?("--tokens") then
+				for x in lexer.tokens
+					x.toString()
+				end			
+			end
+
+			# IMPRESION DE AST
+			if (flags.include?("-a") || flags.include?("--ast")) && !(flags.include?("-s") || flags.include?("--symbols")) then
+				ast.printNodo(0, false)
+			end
+
+			# IMPRESION AST CON TABLAS DE SIMBOLOS
+			if flags.include?("-s") || flags.include?("--symbols") then
+				ast.printNodo(0, true)
+			end
+
+			# CORRIDA DEL PROGRAMA
+			if flags.length == 0 then
+				interpretador = Interpretador.new(ast)
+				interpretador.interpretar()
+			end
 		end
 	end
 

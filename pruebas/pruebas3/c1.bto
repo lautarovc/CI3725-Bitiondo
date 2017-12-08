@@ -1,0 +1,9 @@
+begin
+  int foo;
+  bool bar;
+  bits baz[4];
+
+  foo = 0;
+  bar = false;
+  baz = 0b0000;
+end

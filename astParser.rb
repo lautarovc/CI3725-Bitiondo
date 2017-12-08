@@ -30,12 +30,12 @@ class NodoInicial < NodoGeneral
 		@bloquePrincipal = bloquePrincipal
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "BEGIN"
 
 		if @bloquePrincipal != nil then
-			@bloquePrincipal.printNodo(nivel+1)
+			@bloquePrincipal.printNodo(nivel+1, simbolo)
 		end
 		printNivel(nivel)
 		puts "END"
@@ -52,20 +52,25 @@ class NodoBloquePrincipal < NodoGeneral
 		@instrucciones = instrucciones
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		if @declaraciones != nil then
-			$cantidadTablas = $cantidadTablas + 1
+			if simbolo then
+				$cantidadTablas = $cantidadTablas + 1
 
-			tabla = TablaSimbolos.new $cantidadTablas
-			$tablasDeSimbolos.push(tabla)
+				tabla = TablaSimbolos.new $cantidadTablas
+				$tablasDeSimbolos.push(tabla)
 
-			@declaraciones.insertarEnTabla()
+				@declaraciones.insertarEnTabla()
 
-			$tablasDeSimbolos[$cantidadTablas].printTabla(nivel)
+				$tablasDeSimbolos[$cantidadTablas].printTabla(nivel)
+
+			else
+				@declaraciones.printNodo(nivel, simbolo)
+			end
 
 		end
 		if @instrucciones != nil then
-			@instrucciones.printNodo(nivel)
+			@instrucciones.printNodo(nivel, simbolo)
 		end
 	end
 end
@@ -79,12 +84,12 @@ class NodoBloques < NodoGeneral
 		@bloquePrincipal = bloquePrincipal
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "BEGIN"
 
 		if @bloquePrincipal != nil then
-			@bloquePrincipal.printNodo(nivel+1)
+			@bloquePrincipal.printNodo(nivel+1, simbolo)
 		end
 
 		printNivel(nivel)
@@ -110,12 +115,12 @@ class NodoDeclaraciones < NodoGeneral
 		end
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 
-		@declaracion.printNodo(nivel)
+		@declaracion.printNodo(nivel, simbolo)
 
 		if @declaraciones != nil then
-			@declaraciones.printNodo(nivel)
+			@declaraciones.printNodo(nivel, simbolo)
 		end
 
 	end
@@ -137,7 +142,7 @@ class NodoDeclaracion < NodoGeneral
 		$tablasDeSimbolos[$cantidadTablas].insertar(@id, @tipo, @tamanio, @asignacion)
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 
 		printNivel(nivel)
 		puts "DECLARE"
@@ -146,18 +151,18 @@ class NodoDeclaracion < NodoGeneral
 		printNivel(nivel)
 		puts "type: #{@tipo.str}"
 
-		@id.printNodo(nivel)
+		@id.printNodo(nivel, simbolo)
 
 		if @tamanio != nil then
 			printNivel(nivel)
 			puts "size:"
-			@tamanio.printNodo(nivel+1)
+			@tamanio.printNodo(nivel+1, simbolo)
 		end
 
 		if @asignacion != nil then
 			printNivel(nivel)
 			puts "value:"
-			@asignacion.printNodo(nivel+1)
+			@asignacion.printNodo(nivel+1, simbolo)
 		end
 	end
 
@@ -172,8 +177,8 @@ class NodoInit < NodoGeneral
 		@valor = valor
 	end
 
-	def printNodo(nivel)
-		@valor.printNodo(nivel)
+	def printNodo(nivel, simbolo)
+		@valor.printNodo(nivel, simbolo)
 	end
 end
 
@@ -187,14 +192,14 @@ class NodoInstrucciones < NodoGeneral
 		@instrucciones = instrucciones
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 
 		if @instruccion != nil then
-			@instruccion.printNodo(nivel)
+			@instruccion.printNodo(nivel, simbolo)
 		end
 
 		if @instrucciones != nil then
-			@instrucciones.printNodo(nivel)
+			@instrucciones.printNodo(nivel, simbolo)
 		end
 
 	end
@@ -209,8 +214,8 @@ class NodoInstruccion < NodoGeneral
 		@instruccion = instruccion
 	end
 
-	def printNodo(nivel)
-		@instruccion.printNodo(nivel)
+	def printNodo(nivel, simbolo)
+		@instruccion.printNodo(nivel, simbolo)
 	end
 
 end
@@ -230,18 +235,18 @@ class NodoExpresionBin < NodoGeneral
 		@column = expresion1.column
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "BIN_EXPRESSION:"
-		@opBinario.printNodo(nivel+1)
+		@opBinario.printNodo(nivel+1, simbolo)
 
 		printNivel(nivel+1)
 		puts "left operand:"
-		@expresion1.printNodo(nivel+2)
+		@expresion1.printNodo(nivel+2, simbolo)
 
 		printNivel(nivel+1)
 		puts "right operand:"
-		@expresion2.printNodo(nivel+2)
+		@expresion2.printNodo(nivel+2, simbolo)
 
 	end
 end
@@ -261,19 +266,19 @@ class NodoExpresionUn < NodoGeneral
 		@column = expresion.column
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "UN_EXPRESSION:"
-		@opUnario.printNodo(nivel+1)
+		@opUnario.printNodo(nivel+1, simbolo)
 
 		printNivel(nivel+1)
 		puts "operand:"
-		@expresion.printNodo(nivel+2)
+		@expresion.printNodo(nivel+2, simbolo)
 
 		if entero != nil then
 			printNivel(nivel+1)
 			puts "index:"
-			@entero.printNodo(nivel+2)
+			@entero.printNodo(nivel+2, simbolo)
 		end
 
 	end
@@ -288,7 +293,7 @@ class NodoOperador < NodoGeneral
 		@operador = operador
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "operator:"
 		printNivel(nivel+1)
@@ -317,22 +322,22 @@ class NodoAsignacion < NodoGeneral
 		$tablasDeSimbolos[$cantidadTablas].insertar(@id, tipo, nil, @expresion, false)
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "ASSIGN"
 
-		@id.printNodo(nivel+1)
+		@id.printNodo(nivel+1, simbolo)
 
 		if @posicion != nil then
 			printNivel(nivel+1)
 			puts "position:"
-			@posicion.printNodo(nivel+2)
+			@posicion.printNodo(nivel+2, simbolo)
 		end
 
 		printNivel(nivel+1)
 		puts "value:"
 
-		@expresion.printNodo(nivel+2)
+		@expresion.printNodo(nivel+2, simbolo)
 	end
 end
 
@@ -345,11 +350,11 @@ class NodoEntrada < NodoGeneral
 		@id = id
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "INPUT"
 
-		@id.printNodo(nivel+1)
+		@id.printNodo(nivel+1, simbolo)
 	end
 end
 
@@ -363,7 +368,7 @@ class NodoSalida < NodoGeneral
 		@expMult = expMult
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "#{token.type}"
 
@@ -371,7 +376,7 @@ class NodoSalida < NodoGeneral
 		puts "elements:"
 
 		if @expMult != nil then
-			@expMult.printNodo(nivel+2)
+			@expMult.printNodo(nivel+2, simbolo)
 		end
 	end
 end
@@ -386,14 +391,14 @@ class NodoExpMultiple < NodoGeneral
 		@expMultiple = expMultiple
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 
 		if @expresion != nil then
-			@expresion.printNodo(nivel)
+			@expresion.printNodo(nivel, simbolo)
 		end
 
 		if @expMultiple != nil then
-			@expMultiple.printNodo(nivel)
+			@expMultiple.printNodo(nivel, simbolo)
 		end
 
 	end
@@ -410,24 +415,24 @@ class NodoCondicional < NodoGeneral
 		@clausuraElse = clausuraElse
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "IF"
 
 		printNivel(nivel+1)
 		puts "condition:"
 
-		@expresion.printNodo(nivel+2)
+		@expresion.printNodo(nivel+2, simbolo)
 
 		printNivel(nivel+1)
 		puts "instruction:"
 
 		if @instDec != nil then
-			@instDec.printNodo(nivel+2)
+			@instDec.printNodo(nivel+2, simbolo)
 		end
 
 		if @clausuraElse != nil then
-			@clausuraElse.printNodo(nivel+1)
+			@clausuraElse.printNodo(nivel+1, simbolo)
 		end
 	end
 end
@@ -441,7 +446,7 @@ class NodoClausuraElse < NodoGeneral
 		@instDec = instDec
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "ELSE"
 
@@ -449,7 +454,7 @@ class NodoClausuraElse < NodoGeneral
 		puts "instruction:"
 
 		if @instDec != nil then
-			@instDec.printNodo(nivel+2)
+			@instDec.printNodo(nivel+2, simbolo)
 		end
 	end
 end
@@ -466,31 +471,36 @@ class NodoFor < NodoGeneral
 		@instDec = instDec
 	end
 
-	def printNodo(nivel)
-		# CREACION DE TABLA DE SIMBOLOS DEL FOR:
-		$cantidadTablas = $cantidadTablas + 1
+	def printNodo(nivel, simbolo)
 
-		tabla = TablaSimbolos.new $cantidadTablas
-		$tablasDeSimbolos.push(tabla)
+		if simbolo then
+			# CREACION DE TABLA DE SIMBOLOS DEL FOR:
+			$cantidadTablas = $cantidadTablas + 1
 
-		@asignacion.insertarEnTabla()
+			tabla = TablaSimbolos.new $cantidadTablas
+			$tablasDeSimbolos.push(tabla)
+
+			@asignacion.insertarEnTabla()
+		end
 
 		printNivel(nivel)
 		puts "FOR"
 
-		@asignacion.printNodo(nivel+1)
+		@asignacion.printNodo(nivel+1, simbolo)
 
-		@expresion1.printNodo(nivel+1)
+		@expresion1.printNodo(nivel+1, simbolo)
 
-		@expresion2.printNodo(nivel+1)
+		@expresion2.printNodo(nivel+1, simbolo)
 
 		printNivel(nivel+1)
 		puts "instruction:"
 
-		$tablasDeSimbolos[$cantidadTablas].printTabla(nivel+2)
+		if simbolo then
+			$tablasDeSimbolos[$cantidadTablas].printTabla(nivel+2)
+		end
 
 		if @instDec != nil then
-			@instDec.printNodo(nivel+2)
+			@instDec.printNodo(nivel+2, simbolo)
 		end
 	end
 end
@@ -508,31 +518,34 @@ class NodoForBits < NodoGeneral
 		@instDec = instDec
 	end
 
-	def printNodo(nivel)
-		# CREACION DE TABLA DE SIMBOLOS DEL FOR:
-		$cantidadTablas = $cantidadTablas + 1
+	def printNodo(nivel, simbolo)
 
-		tabla = TablaSimbolos.new $cantidadTablas
-		$tablasDeSimbolos.push(tabla)
+		if simbolo then
+			# CREACION DE TABLA DE SIMBOLOS DEL FOR:
+			$cantidadTablas = $cantidadTablas + 1
 
-		tipo = Token.new("int", -1, -1)
+			tabla = TablaSimbolos.new $cantidadTablas
+			$tablasDeSimbolos.push(tabla)
 
-		$tablasDeSimbolos[$cantidadTablas].insertar(@id, tipo, nil, nil, false)
+			tipo = Token.new("int", -1, -1)
+
+			$tablasDeSimbolos[$cantidadTablas].insertar(@id, tipo, nil, nil, false)
+		end
 
 		printNivel(nivel)
 		puts "FOR BITS"
 
 		printNivel(nivel+1)
 		puts "value:"
-		@expresion1.printNodo(nivel+2)
+		@expresion1.printNodo(nivel+2, simbolo)
 
 		printNivel(nivel+1)
 		puts "as:"
-		@id.printNodo(nivel+2)
+		@id.printNodo(nivel+2, simbolo)
 
 		printNivel(nivel+1)
 		puts "from:"
-		@expresion2.printNodo(nivel+2)
+		@expresion2.printNodo(nivel+2, simbolo)
 
 		printNivel(nivel+1)
 		puts "going:"
@@ -542,10 +555,12 @@ class NodoForBits < NodoGeneral
 		printNivel(nivel+1)
 		puts "instruction:"
 
-		$tablasDeSimbolos[$cantidadTablas].printTabla(nivel+2)
+		if simbolo then
+			$tablasDeSimbolos[$cantidadTablas].printTabla(nivel+2)
+		end
 
 		if @instDec != nil then
-			@instDec.printNodo(nivel+2)
+			@instDec.printNodo(nivel+2, simbolo)
 		end
 	end
 end
@@ -553,7 +568,7 @@ end
 
 class NodoWhile < NodoGeneral
 
-	attr_accessor :repeat, :instDec1, :expresion, :do, :instDec2
+	attr_accessor :repeat, :instDec1, :expresion, :dow, :instDec2
 
 	def initialize(repeat, instDec1, expresion, dow, instDec2)
 		@repeat = repeat
@@ -563,7 +578,7 @@ class NodoWhile < NodoGeneral
 		@instDec2 = instDec2
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "WHILE"
 
@@ -572,20 +587,20 @@ class NodoWhile < NodoGeneral
 			puts "repeat:"
 
 			if @instDec1 != nil then
-				@instDec1.printNodo(nivel+2)
+				@instDec1.printNodo(nivel+2, simbolo)
 			end
 		end
 
 		printNivel(nivel+1)
 		puts "condition:"
-		@expresion.printNodo(nivel+2)
+		@expresion.printNodo(nivel+2, simbolo)
 
 		if @dow != nil then
 			printNivel(nivel+1)
 			puts "do:"
 
 			if @instDec2 != nil then
-				@instDec2.printNodo(nivel+2)
+				@instDec2.printNodo(nivel+2, simbolo)
 			end
 		end
 	end
@@ -602,7 +617,7 @@ class NodoId < NodoGeneral
 		@column = valor.column
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "variable: #{@valor.str}"
 	end
@@ -619,7 +634,7 @@ class NodoInt < NodoGeneral
 		@column = valor.column
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "const_int: #{@valor.str}"
 	end
@@ -636,7 +651,7 @@ class NodoBool < NodoGeneral
 		@column = valor.column
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "const_bool: #{@valor.str}"
 	end
@@ -654,7 +669,7 @@ class NodoBits < NodoGeneral
 		@tamanio = valor.str.length - 2
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "const_bits: #{@valor.str}"
 	end
@@ -671,7 +686,7 @@ class NodoStr < NodoGeneral
 		@column = valor.column
 	end
 
-	def printNodo(nivel)
+	def printNodo(nivel, simbolo)
 		printNivel(nivel)
 		puts "const_str: #{@valor.str}"
 	end

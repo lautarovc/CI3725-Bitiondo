@@ -1,0 +1,22 @@
+begin
+  int foo = 0;
+  bool bar = false;
+
+  begin
+    bool foo = true;
+    int bar = 10;
+
+    foo = false;
+    bar = 20;
+  end
+
+  begin
+    int foo = 10;
+
+    foo = 20;
+    begin
+      bool foo = false;
+      foo = true;
+    end
+  end
+end

@@ -1,0 +1,5 @@
+begin
+  for (b = 1; b < 10; 1) b = 10;
+
+  forbits 0b0000 as b from 0 going higher b = 10;
+end

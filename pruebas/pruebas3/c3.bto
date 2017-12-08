@@ -1,0 +1,17 @@
+begin
+  int foo;
+  bool bar;
+
+  # 0.25 ptos
+  for (b = 0; b < 10; 1)
+    bar = false;
+
+  # 0.25 ptos
+  for (bar = 0; bar < 10; 1)
+    foo = bar;
+
+  # 0.5 pto
+  for (bar = 0; bar < 10; 1)
+    for (baz = 0; baz < 10; 1)
+      foo = baz;
+end

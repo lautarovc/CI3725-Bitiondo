@@ -38,19 +38,30 @@ class TablaSimbolos
 
 		if asignacion != nil then
 			@asignacion.store(identificador.valor.str, asignacion)
+
 		else
+
 			if tipo.str == "int" then
-				token = Token.new("0", -1, -1)
-				nodo = NodoInt.new(token)
-				@asignacion.store(identificador.valor.str, nodo)
+				# token = Token.new("0", -1, -1)
+				# nodo = NodoInt.new(token)
+				@asignacion.store(identificador.valor.str, 0)
 
 			elsif tipo.str == "bool" then
-				token = Token.new("false", -1, -1)
-				nodo = NodoBool.new(token)
-				@asignacion.store(identificador.valor.str, nodo)
+				# token = Token.new("false", -1, -1)
+				# nodo = NodoBool.new(token)
+				@asignacion.store(identificador.valor.str, false)
 
-			elsif tipo.str == "bits" then
-				# IMPOSIBLE SIN EVALUAR EXPRESION DEL TAMANIO
+			elsif tipo.str == "bits" && (tamanio.is_a?(Integer) || tamanio.is_a?(String)) then
+
+				i = 0
+				valor = "0b"
+				while (i<Integer(tamanio))
+					valor += "0"
+					i += 1
+				end
+
+				@asignacion.store(identificador.valor.str, valor)
+
 			end
 
 		end
@@ -135,16 +146,23 @@ class TablaSimbolos
 		end
 	end
 
-	# def tieneTamanio(identificador)
-	# 	tiene = @tamanio.has_key?(identificador)
+	def tieneTamanio(identificador)
+		tiene = @tamanio.has_key?(identificador)
 
-	# 	return tiene
-	# end
+		return tiene
+	end
 
-	# def tieneAsignacion(identificador)
-	# 	tiene = @asignacion.has_key?(identificador)
+	def tieneAsignacion(identificador)
+		tiene = @asignacion.has_key?(identificador)
 
-	# 	return tiene
-	# end
+		return tiene
+	end
+
+	def actualizarAsignacion(identificador, asignacion)
+
+		if asignacion != nil then
+			@asignacion.store(identificador.valor.str, asignacion)
+		end
+	end
 
 end

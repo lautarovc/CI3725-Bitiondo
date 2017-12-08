@@ -1,0 +1,8 @@
+begin
+  int foo;
+  bool bar;
+  bits baz[4];
+
+  if (foo == 0)
+    bar = true;
+end

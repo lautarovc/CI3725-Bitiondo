@@ -20,7 +20,12 @@ class Customer
 
 end
 
-cust1 = Customer.new("1", "Lautaro", "Caracas")
+usuario = gets
+
+usuario = usuario.chomp
+
+
+cust1 = Customer.new("1", usuario, "Caracas")
 cust2 = Customer.new("2", "Caracol", "Pecera")
 
 cust1.display_details()

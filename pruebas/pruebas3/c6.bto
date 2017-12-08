@@ -1,0 +1,11 @@
+begin
+  int foo = 0;
+  bool foo;
+  bits foo[10];
+
+  begin
+    int foo;
+    bool foo;
+    bits foo[10];
+  end
+end

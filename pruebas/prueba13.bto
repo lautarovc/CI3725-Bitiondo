@@ -5,7 +5,7 @@ begin
 	bits x[32];
 
 	# Variables declaradas con inicialización 
-	int d = 15%$0b10; 
+	int d = 15%$0b10000000000000000000000000000000; 
 	bool e = true && b;
 	bits f[32] = x << 3;
 	int mm;
@@ -15,30 +15,41 @@ begin
 	
 	bool y = (b);
 	
-	f[3] = x[5];
+	#x = @4294967296;
+	
+	#bits p[3] = x;
+	
+	#f[3] = 5;
 
-	#f = 0b001 | 0b010;
+	#f = 0b001 | 0b001;
 	
-	outputln true || e, mm + 3 - 5 == (8), @15 & x,  0b01000000000000000000000000000000 | x << 3;
+	output "HOLA COCACOLA", " MI NOMBRE\n", "ES JOSE\n";
 	
 	
-    for (i=0;i<20;i)
-        begin
-            int i = 2;
-            i = 3;
-        end
+    #for (i=0;i>-20;-1)
+    #    begin
+    #        output i;
+    #    end
         
-    i = 0b1111;
+    i = 0b0101;
     
-    forbits i as j from 5 going higher
-        begin
-            bits j[4];
-        end
+    forbits i as j from -1 going lower
+        outputln j;
+    
+    
+    
+   # repeat
+   #     begin
+   #         output mm;
+   #         input mm;
+   #     end
+   # while (mm>0);
+    
         
-    if (j < 5) 
-        output d;
+    if (mm < 5) 
+        outputln d;
     else 
-        output f 
+        outputln f;
     
     
 end
