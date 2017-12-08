@@ -548,7 +548,6 @@ class Interpretador
     end
 
 
-    # FAAAAALTA
     def interpretadorForBits(nodoForBits, idTabla)
         expresionBits = interpretadorExpresion(nodoForBits.expresion1, idTabla)
 
